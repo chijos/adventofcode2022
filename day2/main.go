@@ -10,47 +10,50 @@ import (
 const opp_rock = "A"
 const opp_paper = "B"
 const opp_scissors = "C"
-const rock = "X"
-const paper = "Y"
-const scissors = "Z"
+const outcome_loss = "X"
+const outcome_draw = "Y"
+const outcome_win = "Z"
 const win = 6
 const draw = 3
 const loss = 0
+const rock = 1
+const paper = 2
+const scissors = 3
 
-func GetScore(opponentShape string, myShape string) int {
+func GetScore(opponentShape string, outcome string) int {
 	score := 0
 
-	if myShape == rock {
-		score += 1
-	} else if myShape == paper {
-		score += 2
-	} else if myShape == scissors {
-		score += 3
+	if outcome == outcome_loss {
+		score += loss
+	} else if outcome == outcome_win {
+		score += win
+	} else {
+		score += draw
 	}
 
-	if myShape == rock {
-		if opponentShape == opp_rock {
-			score += draw
-		} else if opponentShape == opp_scissors {
-			score += win
+	if opponentShape == opp_rock {
+		if outcome == outcome_win {
+			score += paper
+		} else if outcome == outcome_loss {
+			score += scissors
 		} else {
-			score += loss
+			score += rock
 		}
-	} else if myShape == paper {
-		if opponentShape == opp_rock {
-			score += win
-		} else if opponentShape == opp_paper {
-			score += draw
+	} else if opponentShape == opp_paper {
+		if outcome == outcome_win {
+			score += scissors
+		} else if outcome == outcome_loss {
+			score += rock
 		} else {
-			score += loss
+			score += paper
 		}
-	} else if myShape == scissors {
-		if opponentShape == opp_rock {
-			score += loss
-		} else if opponentShape == opp_paper {
-			score += win
+	} else if opponentShape == opp_scissors {
+		if outcome == outcome_win {
+			score += rock
+		} else if outcome == outcome_loss {
+			score += paper
 		} else {
-			score += draw
+			score += scissors
 		}
 	}
 
