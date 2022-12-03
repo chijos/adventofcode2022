@@ -4,21 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-  "strings"
+	"sort"
+	"strings"
 )
-
-type Rucksack struct {
-  CompartmentOne string
-  CompartmentTwo string
-}
-
-func (r Rucksack) Length() int {
-  return len(r.CompartmentOne) + len(r.CompartmentTwo)
-}
-
-func (r Rucksack) AllItems() string {
-  return r.CompartmentOne + r.CompartmentTwo
-}
 
 const priorityString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -26,50 +14,35 @@ func getPriority(item string) int {
   return strings.Index(priorityString, item) + 1
 }
 
-func getMisplacedItem(rucksack Rucksack) string {
-  for i := 0; i < len(rucksack.CompartmentOne); i++ {
-    item := string(rucksack.CompartmentOne[i])
-    if strings.Index(rucksack.CompartmentTwo, item) > -1 {
-      return item
+func getMisplacedItem(rucksack string) string {
+  midpoint := len(rucksack) / 2
+  for i := 0; i < midpoint; i++ {
+    for j := midpoint; j < len(rucksack); j++ {
+      if rucksack[i] == rucksack[j] {
+        return string(rucksack[i])
+      }
     }
   }
-  return "0" // should never get here according to data specifications
+  return "" // should never reach here according to input specification
 }
 
-func readInputFile(filename string) []Rucksack {
+func readInputFile(filename string) []string {
   file, err := os.Open(filename)
   if err != nil {
     fmt.Println(err)
   }
   defer file.Close()
 
-  var rucksacks []Rucksack
+  var rucksacks []string
   scanner := bufio.NewScanner(file)
   for scanner.Scan() {
     line := scanner.Text()
-    itemCount := len(line)
-    itemPerCompartment := itemCount / 2
-    compartmentOne := line[:itemPerCompartment]
-    compartmentTwo := line[itemPerCompartment:]
-
-    rucksacks = append(rucksacks, Rucksack{ CompartmentOne: compartmentOne, CompartmentTwo: compartmentTwo})
+    rucksacks = append(rucksacks, line)
   }
   return rucksacks
 }
 
-func getRucksackWithMostItems(rucksacks []Rucksack) Rucksack {
-  maxLen := -1
-  var rucksackWithMostItems Rucksack
-  for _, rucksack := range rucksacks {
-    if rucksack.Length() > maxLen {
-      maxLen = rucksack.Length()
-      rucksackWithMostItems = rucksack
-    }
-  }
-  return rucksackWithMostItems
-}
-
-func PartOne(rucksacks []Rucksack) {
+func PartOne(rucksacks []string) {
   sumOfPriorities := 0
   for _, rucksack := range rucksacks {
     misplacedItem := getMisplacedItem(rucksack)
@@ -77,26 +50,26 @@ func PartOne(rucksacks []Rucksack) {
   }
   fmt.Println(sumOfPriorities)
 }
-  
-func PartTwo(rucksacks []Rucksack) {
+
+func PartTwo(rucksacks []string) {
   sumOfPriorities := 0
 
-  for i := 0 ; i < len(rucksacks); i+=3 {
+  for i := 0; i < len(rucksacks); i+=3 {
     group := rucksacks[i:i+3]
-    rucksackWithMostItems := getRucksackWithMostItems(group)
-
-    for _, item := range rucksackWithMostItems.AllItems() {
-      strItem := string(item)
-      isInFirstRucksack := strings.Index(group[0].AllItems(), strItem) != -1
-      isInSecondRucksack := strings.Index(group[1].AllItems(), strItem) != -1
-      isInThirdRucksack := strings.Index(group[2].AllItems(), strItem) != -1
-      if isInFirstRucksack && isInSecondRucksack && isInThirdRucksack {
+    sort.Slice(group, func (i,j int) bool {
+      return len(group[i]) > len(group[j])
+    })
+    for k := 0 ; k < len(group[0]); k++ {
+      strItem := string(group[0][k])
+      isInSecondRucksack := strings.Index(group[1], strItem) != -1
+      isInThirdRucksack := strings.Index(group[2], strItem) != -1
+      if isInSecondRucksack && isInThirdRucksack {
         sumOfPriorities += getPriority(strItem)
         break
       }
     }
   }
-  
+
   fmt.Println(sumOfPriorities)
 }
 
