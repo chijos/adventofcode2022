@@ -19,13 +19,22 @@ type AssignmentPair struct {
 }
 
 func (a AssignmentPair) HasRedundantAssignment() bool {
-  if a.A.Start <= a.B.Start && a.A.End >= a.B.End {
-    return true
-  } else if a.B.Start <= a.A.Start && a.B.End >= a.A.End {
-    return true
-  } else {
-    return false
-  }
+	if a.A.Start <= a.B.Start && a.A.End >= a.B.End {
+		return true
+	} else if a.B.Start <= a.A.Start && a.B.End >= a.A.End {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (a AssignmentPair) HasOverlap() bool {
+	if a.A.Start < a.B.Start {
+		return a.A.End >= a.B.Start
+	} else if a.B.Start < a.A.Start {
+		return a.B.End >= a.A.Start
+	}
+	return true
 }
 
 func parseAssignment(input string) Assignment {
@@ -36,8 +45,8 @@ func parseAssignment(input string) Assignment {
 }
 
 func parseAssignmentPair(input string) AssignmentPair {
-  split := strings.Split(input, ",")
-  return AssignmentPair{A: parseAssignment(split[0]), B: parseAssignment(split[1])}
+	split := strings.Split(input, ",")
+	return AssignmentPair{A: parseAssignment(split[0]), B: parseAssignment(split[1])}
 }
 
 func readInputFile(filename string) []AssignmentPair {
@@ -51,25 +60,32 @@ func readInputFile(filename string) []AssignmentPair {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-    assignmentPair := parseAssignmentPair(line)
+		assignmentPair := parseAssignmentPair(line)
 		assignmentPairs = append(assignmentPairs, assignmentPair)
 	}
 	return assignmentPairs
 }
 
 func partOne(fileName string) {
-  assignmentPairs := readInputFile(fileName)
-  numberOfRedundantAssignments := 0
-  for _, pair := range assignmentPairs {
-    if pair.HasRedundantAssignment() {
-      numberOfRedundantAssignments += 1
-    }
-  }
-  fmt.Println(numberOfRedundantAssignments)
+	assignmentPairs := readInputFile(fileName)
+	numberOfRedundantAssignments := 0
+	for _, pair := range assignmentPairs {
+		if pair.HasRedundantAssignment() {
+			numberOfRedundantAssignments += 1
+		}
+	}
+	fmt.Println(numberOfRedundantAssignments)
 }
 
 func partTwo(fileName string) {
-
+	assignmentPairs := readInputFile(fileName)
+	numberOfOverlappingAssignments := 0
+	for _, pair := range assignmentPairs {
+		if pair.HasOverlap() {
+			numberOfOverlappingAssignments += 1
+		}
+	}
+	fmt.Println(numberOfOverlappingAssignments)
 }
 
 func main() {
