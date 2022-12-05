@@ -82,6 +82,26 @@ func partOne(filename string) {
   fmt.Println(result)
 }
 
+func partTwo(filename string) {
+  input := readInputFile(filename)
+
+  // carry out instructions
+  for _, instruction := range input.Instructions {
+    sourceStack := input.Stacks[instruction.Source]
+    destinationStack := input.Stacks[instruction.Destination]
+    crateMarkers := sourceStack[len(sourceStack) - instruction.NumberOfCrates:]
+    input.Stacks[instruction.Source] = sourceStack[:len(sourceStack) - instruction.NumberOfCrates]
+    input.Stacks[instruction.Destination] = destinationStack + crateMarkers
+  }
+
+  result := ""
+  for _, stack := range input.Stacks {
+    result += string(stack[len(stack) - 1:])
+  }
+  fmt.Println(result)
+}
+
 func main() {
   partOne("input.txt")
+  partTwo("input.txt")
 }
