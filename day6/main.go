@@ -41,10 +41,18 @@ func partOne(dataStream string) {
   }
 }
 
-func partTwo() {}
+func partTwo(dataStream string) {
+  for i := 0; i < len(dataStream) - 14; i++ {
+    packet := dataStream[i:i+14]
+    if !hasRepeatedCharacters(packet) {
+      fmt.Println(i + 14)
+      return
+    }
+  }
+}
 
 func main() {
 	dataStream := readInputFile("input.txt")
 	partOne(dataStream)
-	partTwo()
+	partTwo(dataStream)
 }
