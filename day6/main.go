@@ -31,24 +31,22 @@ func hasRepeatedCharacters(packet string) bool {
   return false
 }
 
-func partOne(dataStream string) {
-  for i := 0; i < len(dataStream) - 4; i++ {
-    packet := dataStream[i:i+4]
+func detectMarkerPacket(dataStream string, packetSize int) {
+  for i := 0; i < len(dataStream) - packetSize; i++ {
+    packet := dataStream[i:i+packetSize]
     if !hasRepeatedCharacters(packet) {
-      fmt.Println(i + 4)
+      fmt.Println(i + packetSize)
       return
     }
   }
 }
 
+func partOne(dataStream string) {
+  detectMarkerPacket(dataStream, 4)
+}
+
 func partTwo(dataStream string) {
-  for i := 0; i < len(dataStream) - 14; i++ {
-    packet := dataStream[i:i+14]
-    if !hasRepeatedCharacters(packet) {
-      fmt.Println(i + 14)
-      return
-    }
-  }
+  detectMarkerPacket(dataStream, 14)
 }
 
 func main() {
